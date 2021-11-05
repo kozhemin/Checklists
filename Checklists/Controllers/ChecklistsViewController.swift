@@ -12,14 +12,8 @@ class ChecklistsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.prefersLargeTitles = true
         self.fillItems()
-    }
-    
-    private func fillItems() {
-
-        for item in 1...50 {
-            items.append(ChecklistItem(text: "\(item) item", checked: false))
-        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -50,6 +44,31 @@ class ChecklistsViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    // MARK: delete rows
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        items.remove(at: indexPath.row)
+        
+        let indexPaths = [indexPath]
+        tableView.deleteRows(at: indexPaths, with: .fade)
+    }
+    
+    private func fillItems() {
+        for item in 1...5 {
+            items.append(ChecklistItem(text: "\(item) item", checked: false))
+        }
+    }
+    
+//    @IBAction func addItem() {
+//        let newIndexRow = items.count
+//        items.append(ChecklistItem(text: "NEW item", checked: false))
+//
+//
+//        let indexPath = IndexPath(row: newIndexRow, section: 0)
+//        let indexPaths = [indexPath]
+//        tableView.insertRows(at: indexPaths, with: .left)
+//    }
+    
     
     private func configureCheckmark(for cell: UITableViewCell, with item: ChecklistItem) {
         
