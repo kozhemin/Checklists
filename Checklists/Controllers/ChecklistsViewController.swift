@@ -7,7 +7,8 @@
 
 import UIKit
 
-class ChecklistsViewController: UITableViewController {
+class ChecklistsViewController: UITableViewController, AddItemViewControllerDelegate {
+    
     var items = [ChecklistItem]()
     
     override func viewDidLoad() {
@@ -53,6 +54,27 @@ class ChecklistsViewController: UITableViewController {
         tableView.deleteRows(at: indexPaths, with: .fade)
     }
     
+    func addItemViewControllerDidCancel(_ controller: AddItemTableViewController) {
+        navigationController?.popViewController(animated: true)
+    }
+    
+    func addItemViewController(_ controller: AddItemTableViewController, didFinishAdding item: ChecklistItem) {
+        let newRowIndex = items.count
+        items.append(item)
+        let indexPath = IndexPath(row: newRowIndex, section: 0)
+        let indexPaths = [indexPath]
+        tableView.insertRows(at: indexPaths, with: .left)
+        
+        navigationController?.popViewController(animated: true)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "AddItem" {
+            let controller = segue.destination as! AddItemTableViewController
+            controller.delegate = self
+        }
+    }
+    
     private func fillItems() {
         for item in 1...5 {
             items.append(ChecklistItem(text: "\(item) item", checked: false))
@@ -62,7 +84,6 @@ class ChecklistsViewController: UITableViewController {
 //    @IBAction func addItem() {
 //        let newIndexRow = items.count
 //        items.append(ChecklistItem(text: "NEW item", checked: false))
-//
 //
 //        let indexPath = IndexPath(row: newIndexRow, section: 0)
 //        let indexPaths = [indexPath]
