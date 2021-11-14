@@ -4,8 +4,9 @@
 //
 //  Created by Егор Кожемин on 03.11.2021.
 //
+import Foundation
 
-class ChecklistItem {
+class ChecklistItem: NSObject  {
     var text = ""
     var checked = false
     
