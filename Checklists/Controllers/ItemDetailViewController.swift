@@ -18,7 +18,9 @@ class ItemDetailViewController: UITableViewController {
     
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var doneBarButton: UIBarButtonItem!
+    
     weak var delegate: AddItemViewControllerDelegate?
+    
     var itemToEdit: ChecklistItem?
     
     override func viewDidLoad() {
@@ -31,7 +33,6 @@ class ItemDetailViewController: UITableViewController {
             textField.text = item.text
             doneBarButton.isEnabled = true
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
