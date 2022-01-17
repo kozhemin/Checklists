@@ -14,17 +14,17 @@ class AllListsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        navigationController?.delegate = self
         
-//        let items: [String] = ["Birthdays", "Groceries", "Cool Apps", "To Do"]
-//        for (_, val) in items.enumerated() {
-//            lists.append(Checklist(name: val))
-//        }
-//
-//        for list in lists {
-//            let item = ChecklistItem(text: "Item for \(list.name)", checked: false)
-//            list.items.append(item)
-//        }
-        
+        let index = dataModel.indexOfSelectedChecklist
+        if index >= 0 && index < dataModel.lists.count {
+            let checklist = dataModel.lists[index]
+            performSegue(withIdentifier: "ShowChecklist", sender: checklist)
+        }
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -44,6 +44,7 @@ class AllListsViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        dataModel.indexOfSelectedChecklist = indexPath.row
         let checklist = dataModel.lists[indexPath.row]
         performSegue(withIdentifier: "ShowChecklist", sender: checklist)
     }
@@ -97,5 +98,14 @@ extension AllListsViewController: ListDetailViewControllerDelegate {
             }
         }
         navigationController?.popViewController(animated: true)
+    }
+}
+
+extension AllListsViewController: UINavigationControllerDelegate {
+    func navigationController(_ navigationController: UINavigationController, willShow viewController: UIViewController, animated: Bool) {
+        // Was the back button tapped?
+        if viewController === self {
+            dataModel.indexOfSelectedChecklist = -1
+        }
     }
 }
