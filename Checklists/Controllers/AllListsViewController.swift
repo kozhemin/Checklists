@@ -11,7 +11,6 @@ class AllListsViewController: UITableViewController {
     let cellIdentifier = "ChecklistCell"
     var dataModel: DataModel!
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -27,18 +26,31 @@ class AllListsViewController: UITableViewController {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tableView.reloadData()
+    }
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         dataModel.lists.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-            withIdentifier: cellIdentifier,
-            for: indexPath)
+        
+        let cell: UITableViewCell!
+        cell = UITableViewCell(style: .subtitle, reuseIdentifier: cellIdentifier)
         
         let ch = dataModel.lists[indexPath.row]
+        let count = ch.countUncheckedItems()
+        
         cell.textLabel?.text = ch.name
         cell.accessoryType = .detailDisclosureButton
+        if ch.items.count == 0 {
+            cell.detailTextLabel!.text = "(No Items)"
+        } else {
+            cell.detailTextLabel!.text = count == 0 ? "All Done" : "\(count) Remaining"
+        }
+        cell.imageView?.image = UIImage(systemName: ch.iconName)
         
         return cell
     }
@@ -68,7 +80,7 @@ class AllListsViewController: UITableViewController {
         if segue.identifier == "ShowChecklist" {
             let vc = segue.destination as! ChecklistsViewController
             vc.checklist = sender as? Checklist
-        }else if segue.identifier == "AddChecklist" {
+        } else if segue.identifier == "AddChecklist" {
             let vc = segue.destination as! ListDetailViewController
             vc.delegate = self
         }

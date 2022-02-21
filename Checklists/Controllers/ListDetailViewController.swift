@@ -19,8 +19,11 @@ class ListDetailViewController: UITableViewController {
     
     @IBOutlet var textField: UITextField!
     @IBOutlet var doneBarButton: UIBarButtonItem!
+    @IBOutlet weak var iconLabel: UILabel!
+    @IBOutlet weak var iconImage: UIImageView!
     
     weak var delegate: ListDetailViewControllerDelegate?
+    var iconName = "folder"
     
     var checklistToEdit: Checklist?
     
@@ -33,7 +36,10 @@ class ListDetailViewController: UITableViewController {
             title = "Edit Checklist"
             textField.text = checklist.name
             doneBarButton.isEnabled = true
+            iconName = checklist.iconName
         }
+        iconImage.image = UIImage(systemName: iconName)
+        iconLabel.text = iconName
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -48,15 +54,23 @@ class ListDetailViewController: UITableViewController {
     @IBAction func done(){
         if let checklist = checklistToEdit {
             checklist.name = textField.text!
+            checklist.iconName = iconName
             delegate?.listDetailViewController(self, didFinishEditing: checklist)
         } else {
-            let checklist = Checklist(name: textField.text!)
+            let checklist = Checklist(name: textField.text!, iconName: iconName)
             delegate?.listDetailViewController(self, didFinishAdding: checklist)
         }
     }
     
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        nil
+        return indexPath.section == 1 ? indexPath : nil
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "PickIcon" {
+            let vc = segue.destination as! IconPickerViewController
+            vc.delegate = self
+        }
     }
 }
 
@@ -72,5 +86,13 @@ extension ListDetailViewController: UITextFieldDelegate {
     func textFieldShouldClear(_ textField: UITextField) -> Bool {
         doneBarButton.isEnabled = false
         return true
+    }
+}
+
+extension ListDetailViewController: IconPickerViewControllerDelegate {
+    func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
+        self.iconName = iconName
+        iconImage.image = UIImage(systemName: iconName)
+        navigationController?.popViewController(animated: true)
     }
 }
