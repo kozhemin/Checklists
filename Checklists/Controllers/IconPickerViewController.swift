@@ -12,36 +12,33 @@ protocol IconPickerViewControllerDelegate: AnyObject {
 }
 
 let icons: [String] = [
-    "folder", "doc", "calendar", "bookmark", "graduationcap", "paperclip", "briefcase"
+    "folder", "doc", "calendar", "bookmark", "graduationcap", "paperclip", "briefcase",
 ]
 
 class IconPickerViewController: UITableViewController {
-    
     weak var delegate: IconPickerViewControllerDelegate?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+
+    override func tableView(_: UITableView, numberOfRowsInSection _: Int) -> Int {
         icons.count
     }
-    
-  
-     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-         let cell = tableView.dequeueReusableCell(withIdentifier: "IconCell", for: indexPath)
-     
-         let iconName = icons[indexPath.row]
-         cell.textLabel?.text = iconName
-         cell.imageView?.image = UIImage(systemName: iconName)
-         return cell
-     }
-   
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "IconCell", for: indexPath)
+
+        let iconName = icons[indexPath.row]
+        cell.textLabel?.text = iconName
+        cell.imageView?.image = UIImage(systemName: iconName)
+        return cell
+    }
+
+    override func tableView(_: UITableView, didSelectRowAt indexPath: IndexPath) {
         if let delegate = delegate {
             let iconName = icons[indexPath.row]
             delegate.iconPicker(self, didPick: iconName)
         }
     }
-    
 }

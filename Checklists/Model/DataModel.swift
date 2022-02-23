@@ -17,16 +17,17 @@ class DataModel {
         set {
             UserDefaults.standard.set(
                 newValue,
-                forKey: "ChecklistIndex")
+                forKey: "ChecklistIndex"
+            )
         }
     }
-    
-    init(){
+
+    init() {
         loadCheckList()
         registerDefaults()
         handleFirstTime()
     }
-    
+
     class func nextChecklistItemID() -> Int {
         let key = "ChecklistItemID"
         let userDefaults = UserDefaults.standard
@@ -34,30 +35,32 @@ class DataModel {
         userDefaults.set(itemID + 1, forKey: key)
         return itemID
     }
-    
+
     func documentsDirectory() -> URL {
         let paths = FileManager.default.urls(
             for: .documentDirectory,
-               in: .userDomainMask)
+            in: .userDomainMask
+        )
         return paths[0]
     }
-    
+
     func dataFilePath() -> URL {
         return documentsDirectory().appendingPathComponent("Checklists-v1.plist")
     }
-    
-    func saveCheckList(){
+
+    func saveCheckList() {
         let encoder = PropertyListEncoder()
         do {
             let data = try encoder.encode(lists)
             try data.write(
                 to: dataFilePath(),
-                options: Data.WritingOptions.atomic)
+                options: Data.WritingOptions.atomic
+            )
         } catch {
             print("Error encoder \(error.localizedDescription)")
         }
     }
-    
+
     func loadCheckList() {
         let path = dataFilePath()
         if let data = try? Data(contentsOf: path) {
@@ -69,20 +72,20 @@ class DataModel {
             }
         }
     }
-    
+
     func registerDefaults() {
-        let dictionary = [ "ChecklistIndex": -1, "FirstTime": true ] as [String: Any]
+        let dictionary = ["ChecklistIndex": -1, "FirstTime": true] as [String: Any]
         UserDefaults.standard.register(defaults: dictionary)
     }
-    
+
     func handleFirstTime() {
         let userDefaults = UserDefaults.standard
         let firstTime = userDefaults.bool(forKey: "FirstTime")
-        
+
         if firstTime {
             let checklist = Checklist(name: "List")
             lists.append(checklist)
-            
+
             indexOfSelectedChecklist = 0
             userDefaults.set(false, forKey: "FirstTime")
         }

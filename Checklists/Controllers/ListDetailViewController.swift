@@ -9,29 +9,28 @@ import UIKit
 
 protocol ListDetailViewControllerDelegate: AnyObject {
     func listDetailViewControllerDidCancel(_ controller: ListDetailViewController)
-    
+
     func listDetailViewController(_ controller: ListDetailViewController, didFinishAdding checklist: Checklist)
-    
+
     func listDetailViewController(_ controller: ListDetailViewController, didFinishEditing checklist: Checklist)
 }
 
 class ListDetailViewController: UITableViewController {
-    
     @IBOutlet var textField: UITextField!
     @IBOutlet var doneBarButton: UIBarButtonItem!
-    @IBOutlet weak var iconLabel: UILabel!
-    @IBOutlet weak var iconImage: UIImageView!
-    
+    @IBOutlet var iconLabel: UILabel!
+    @IBOutlet var iconImage: UIImageView!
+
     weak var delegate: ListDetailViewControllerDelegate?
     var iconName = "folder"
-    
+
     var checklistToEdit: Checklist?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         textField.delegate = self
-        self.navigationItem.largeTitleDisplayMode = .never
-        
+        navigationItem.largeTitleDisplayMode = .never
+
         if let checklist = checklistToEdit {
             title = "Edit Checklist"
             textField.text = checklist.name
@@ -41,17 +40,17 @@ class ListDetailViewController: UITableViewController {
         iconImage.image = UIImage(systemName: iconName)
         iconLabel.text = iconName
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         textField.becomeFirstResponder()
     }
-    
-    @IBAction func cancel(){
+
+    @IBAction func cancel() {
         delegate?.listDetailViewControllerDidCancel(self)
     }
-    
-    @IBAction func done(){
+
+    @IBAction func done() {
         if let checklist = checklistToEdit {
             checklist.name = textField.text!
             checklist.iconName = iconName
@@ -61,12 +60,12 @@ class ListDetailViewController: UITableViewController {
             delegate?.listDetailViewController(self, didFinishAdding: checklist)
         }
     }
-    
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+
+    override func tableView(_: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         return indexPath.section == 1 ? indexPath : nil
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+    override func prepare(for segue: UIStoryboardSegue, sender _: Any?) {
         if segue.identifier == "PickIcon" {
             let vc = segue.destination as! IconPickerViewController
             vc.delegate = self
@@ -82,15 +81,15 @@ extension ListDetailViewController: UITextFieldDelegate {
         doneBarButton.isEnabled = !newText.isEmpty
         return true
     }
-    
-    func textFieldShouldClear(_ textField: UITextField) -> Bool {
+
+    func textFieldShouldClear(_: UITextField) -> Bool {
         doneBarButton.isEnabled = false
         return true
     }
 }
 
 extension ListDetailViewController: IconPickerViewControllerDelegate {
-    func iconPicker(_ picker: IconPickerViewController, didPick iconName: String) {
+    func iconPicker(_: IconPickerViewController, didPick iconName: String) {
         self.iconName = iconName
         iconImage.image = UIImage(systemName: iconName)
         navigationController?.popViewController(animated: true)
