@@ -27,6 +27,14 @@ class DataModel {
         handleFirstTime()
     }
     
+    class func nextChecklistItemID() -> Int {
+        let key = "ChecklistItemID"
+        let userDefaults = UserDefaults.standard
+        let itemID = userDefaults.integer(forKey: key)
+        userDefaults.set(itemID + 1, forKey: key)
+        return itemID
+    }
+    
     func documentsDirectory() -> URL {
         let paths = FileManager.default.urls(
             for: .documentDirectory,

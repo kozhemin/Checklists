@@ -18,6 +18,8 @@ class ItemDetailViewController: UITableViewController {
     
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var doneBarButton: UIBarButtonItem!
+    @IBOutlet var shouldReminingSwitch: UISwitch!
+    @IBOutlet var datePicker: UIDatePicker!
     
     weak var delegate: AddItemViewControllerDelegate?
     
@@ -32,6 +34,8 @@ class ItemDetailViewController: UITableViewController {
             title = "edit item"
             textField.text = item.text
             doneBarButton.isEnabled = true
+            shouldReminingSwitch.isOn = item.shouldRemind
+            datePicker.date = item.dueDate
         }
     }
     
@@ -47,10 +51,31 @@ class ItemDetailViewController: UITableViewController {
     @IBAction func done() {
         if let item = itemToEdit {
             item.text = textField.text!
+            item.shouldRemind = shouldReminingSwitch.isOn
+            item.dueDate = datePicker.date
+            item.scheduleNotification()
+            
             delegate?.addItemViewController(self, didFinishEditing: item)
         } else {
-            let item = ChecklistItem(text: textField.text!, checked: false)
+            let item = ChecklistItem()
+            item.text = textField.text!
+            item.checked = false
+            item.shouldRemind = shouldReminingSwitch.isOn
+            item.dueDate = datePicker.date
+            item.scheduleNotification()
+            
             delegate?.addItemViewController(self, didFinishAdding: item)
+        }
+    }
+    
+    @IBAction func shouldRemindToggled(_ switchControl: UISwitch){
+        textField.resignFirstResponder()
+        
+        if switchControl.isOn {
+            let center = UNUserNotificationCenter.current()
+            center.requestAuthorization(options: [.alert, .sound]) { _,_ in
+                // do...
+            }
         }
     }
     
